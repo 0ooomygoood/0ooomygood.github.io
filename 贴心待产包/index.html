@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🍼 暖心待产包 · 跨设备同步清单</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fef7e8;
+            font-family: 'Segoe UI', 'Quicksand', system-ui, -apple-system, 'Comic Neue', 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0 20px 60px;
+            color: #3b2a1f;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ========= BANNER 区域 ========= 16:9 比例 */
+        .banner-wrapper {
+            position: relative;
+            background-color: #fff2db;
+            border-radius: 48px;
+            margin: 24px 0 32px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03), 0 6px 6px rgba(0,0,0,0.05);
+        }
+        .banner {
+            aspect-ratio: 16 / 9;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #ffefcf;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            width: 100%;
+        }
+        .banner-text {
+            background: rgba(255, 240, 210, 0.75);
+            backdrop-filter: blur(6px);
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #a5673f;
+            letter-spacing: 2px;
+            border: 1px solid rgba(255,255,200,0.7);
+        }
+        .banner-text span {
+            font-size: 1.2rem;
+            margin-right: 6px;
+        }
+        .banner-control {
+            background: #fff6e6;
+            padding: 12px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            border-top: 1px solid #ffe2b5;
+            font-size: 0.85rem;
+        }
+        .banner-control label {
+            font-weight: 600;
+            color: #b97f4b;
+        }
+        .banner-control input {
+            flex: 2;
+            min-width: 260px;
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid #ffd9a5;
+            background: #fffbf4;
+            font-size: 0.85rem;
+        }
+        .banner-control button {
+            background: #f3d9b1;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #6b3f1c;
+            cursor: pointer;
+        }
+        .banner-control button:hover {
+            background: #eac88a;
+        }
+
+        /* 工具条 */
+        .global-tools {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .global-btn {
+            background: #ffebcc;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #8b5a2e;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .global-btn:hover {
+            background: #ffe1b3;
+            transform: translateY(-2px);
+        }
+
+        /* 分类卡片 */
+        .category-card {
+            background: #ffffff;
+            border-radius: 36px;
+            margin-bottom: 40px;
+            padding: 20px 20px 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.05);
+            border: 1px solid #fff0df;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            padding-left: 12px;
+            border-left: 8px solid;
+        }
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .total-amount {
+            background: #fff0e0;
+            padding: 5px 16px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #c27e4a;
+            letter-spacing: 0.5px;
+            margin-left: 12px;
+            white-space: nowrap;
+        }
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .table-btn {
+            background: #f7f1e2;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 28px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #886b48;
+        }
+        .table-btn.danger {
+            background: #ffe2dd;
+            color: #bc6f5c;
+        }
+        .table-btn:hover {
+            background: #e9dbc7;
+        }
+
+        /* 表格样式 */
+        .editable-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .editable-table th,
+        .editable-table td {
+            border: 1px solid #f0ddc4;
+            padding: 10px 8px;
+            vertical-align: middle;
+            word-break: break-word;
+        }
+        .editable-table th {
+            background: #faf1e2;
+            font-weight: 700;
+            color: #7e5a3a;
+            text-align: center;
+            position: relative;
+        }
+        .resize-handle {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: transparent;
+            cursor: col-resize;
+            z-index: 10;
+        }
+        .resize-handle:hover {
+            background: #eac88a;
+        }
+        .editable-table td {
+            background-color: #fffef9;
+        }
+        .checkbox-cell {
+            text-align: center;
+            width: 70px;
+        }
+        .checkbox-cell input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #e2b87a;
+        }
+        [contenteditable="true"] {
+            outline: none;
+            padding: 4px 6px;
+            border-radius: 16px;
+            cursor: text;
+        }
+        [contenteditable="true"]:focus {
+            background-color: #fff2e2;
+            box-shadow: 0 0 0 2px #fad19e;
+        }
+        .serial-num {
+            text-align: center;
+            font-weight: 500;
+            background-color: #fffbf0;
+        }
+        .action-cell {
+            text-align: center;
+            width: 45px;
+        }
+        .delete-row-icon {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #c49a6c;
+            padding: 4px 8px;
+            border-radius: 30px;
+        }
+        .delete-row-icon:hover {
+            background: #ffe0d4;
+            color: #e05a3a;
+        }
+        .price-cell {
+            text-align: center;
+        }
+        .price-cell [contenteditable] {
+            text-align: center;
+        }
+
+        .card-0 { border-left: 8px solid #fcd9b8; }
+        .card-1 { border-left: 8px solid #fbdec2; }
+        .card-2 { border-left: 8px solid #ffe0c0; }
+        .card-3 { border-left: 8px solid #feebcd; }
+        .card-4 { border-left: 8px solid #fddfbc; }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #bb9a73;
+        }
+        @media (max-width: 780px) {
+            .editable-table th, .editable-table td { font-size: 0.7rem; padding: 6px 4px; }
+            .total-amount { font-size: 0.75rem; }
+            .banner-text { font-size: 1rem; padding: 6px 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="banner-wrapper">
+        <div class="banner" id="bannerImage" style="background-image: url(''); background-color: #fff2db;">
+            <div class="banner-text"><span>🐣</span> 贴心待产包 · 从容迎接新生命 <span>🍼</span></div>
+        </div>
+        <div class="banner-control">
+            <label>🖼️ Banner 图片链接 (16:9):</label>
+            <input type="text" id="bannerUrlInput" placeholder="输入图片URL，留空则显示淡黄色背景" value="">
+            <button id="applyBannerBtn">应用并保存</button>
+            <small style="color:#b78f60;">✨ 链接自带状态，任意浏览器打开相同URL即同步 ✨</small>
+        </div>
+    </div>
+
+    <div class="global-tools">
+        <button class="global-btn" id="saveToLocalBtn">💾 保存到本地(LocalStorage)</button>
+        <button class="global-btn" id="copyLinkBtn">🔗 复制分享链接(含当前状态)</button>
+    </div>
+
+    <div id="tablesContainer"></div>
+    <footer>✨ 所有修改自动同步到浏览器地址栏！复制链接即可分享当前清单，任何设备打开都一样 ✨<br>双击单元格编辑 | 价格列只支持数字，自动添加¥ | 拖拽列边界可调整列宽 | 标题旁自动合计金额</footer>
+</div>
+
+<script>
+    // ---------- 分类数据 ----------
+    const CATEGORIES = [
+        { id: "cert", title: "📁 证件资料类" },
+        { id: "momIn", title: "🏥 住院 · 妈妈用品" },
+        { id: "babyIn", title: "👶 住院 · 宝宝用品" },
+        { id: "momDelivery", title: "🏨 产房 · 妈妈用品" },
+        { id: "babyDelivery", title: "🍼 产房 · 宝宝用品" }
+    ];
+
+    // 基础列定义
+    const coreColumns = [
+        { key: "sn", label: "序号", type: "text" },
+        { key: "item", label: "物品名称", type: "text" },
+        { key: "usage", label: "用途", type: "text" },
+        { key: "price", label: "价格 (¥)", type: "price_number" },
+        { key: "inCart", label: "已加购物车", type: "checkbox" },
+        { key: "ready", label: "已准备", type: "checkbox" },
+        { key: "remarks", label: "备注", type: "text" }
+    ];
+    const actionColumn = { key: "_deleteAction", label: "🗑️", type: "action", width: "50px" };
+
+    // 初始物品清单
+    const initDataMap = {
+        cert: ["产检资料", "母子健康手册", "双方身份证", "双方结婚证", "双方户口本", "产妇社保卡", "生育登记证/准生证", "银行卡"],
+        momIn: ["哺乳内衣*2件", "睡衣*2套", "月子帽/发带*1", "长筒袜*3双", "包跟拖鞋*1双", "出院衣物*1套", "产褥垫*2包", "刀纸*2包","一次性马桶垫*1包", "一次性内裤*10条", "私处冲洗器*1", "卫生巾*3包", "安睡裤*2包", "收腹带*1条(剖)", "洗漱包*1套","折叠盆*2个", "抽纸/卷纸*3", "毛巾/洗脸巾*1包", "吸管杯*1个", "餐具*1套", "吸奶器*1个", "防溢乳垫*1包"],
+        babyIn: ["52码衣服*2件", "胎帽*1-2个", "包被*2个", "包单*1个", "纱布浴巾*2个", "小方巾*3条", "袜子*2-3双", "NB码纸尿裤*1包","一次性隔尿垫*1包", "云柔巾*2包", "棉柔巾*2包", "护臀膏*1个", "碘伏棉签*1盒", "宝宝面霜*1个", "洗衣液*1瓶","折叠盆*2个", "衣架*3-5个", "恒温壶*1个", "小罐奶粉*1罐", "160ml奶瓶*1个", "奶瓶清洗剂*1瓶", "奶瓶刷*1套"],
+        momDelivery: ["产褥垫*1包", "胎心监护带*1条", "安睡裤/卫生巾*1包", "一次性内裤*1包", "吸管杯*1个", "能量饮料*2瓶", "面包/零食"],
+        babyDelivery: ["52码衣服*1件", "NB码纸尿裤*2个", "包被*1条", "包单*1条", "胎帽*1个"]
+    };
+
+    let tablesData = [];
+    let currentBannerUrl = "";
+
+    // ------------------- 辅助函数 -------------------
+    function buildInitialRows(categoryId) {
+        const items = initDataMap[categoryId] || [];
+        return items.map((name, idx) => ({
+            sn: (idx+1).toString(),
+            item: name,
+            usage: "",
+            price: 0,
+            inCart: false,
+            ready: false,
+            remarks: ""
+        }));
+    }
+
+    function buildTableDataWithAction() {
+        const newTables = [];
+        for (let cat of CATEGORIES) {
+            const initRows = buildInitialRows(cat.id);
+            const columns = [...coreColumns.map(c => ({...c}))];
+            columns.push({...actionColumn});
+            const colWidths = columns.map(() => null);
+            newTables.push({
+                categoryId: cat.id,
+                columns: columns,
+                rows: initRows,
+                colWidths: colWidths
+            });
+        }
+        return newTables;
+    }
+
+    // 计算合计
+    function computeTotal(table) {
+        let sum = 0;
+        table.rows.forEach(row => {
+            let priceVal = row.price;
+            if (typeof priceVal === 'number') sum += priceVal;
+            else if (typeof priceVal === 'string') {
+                let num = parseFloat(priceVal);
+                if (!isNaN(num)) sum += num;
+            }
+        });
+        return sum;
+    }
+
+    function updateAllTotals() {
+        const cards = document.querySelectorAll('.category-card');
+        cards.forEach(card => {
+            const catId = card.getAttribute('data-cat-id');
+            const tableObj = tablesData.find(t => t.categoryId === catId);
+            if (tableObj) {
+                const total = computeTotal(tableObj);
+                const totalSpan = card.querySelector('.total-amount');
+                if (totalSpan) totalSpan.innerText = `合计: ¥${total.toFixed(2)}`;
+            }
+        });
+    }
+
+    // 同步状态到 URL Hash (实现跨设备共享)
+    function syncStateToHash() {
+        const state = { tablesData, bannerUrl: currentBannerUrl, version: "2.0" };
+        const json = JSON.stringify(state);
+        const encoded = encodeURIComponent(json);
+        const newHash = encoded;
+        if (window.location.hash.substring(1) !== newHash) {
+            window.history.replaceState(null, '', '#' + newHash);
+        }
+    }
+
+    // 重新排序所有表格的行号
+    function reorderSerialNumbers(tableObj) {
+        tableObj.rows.forEach((row, idx) => { row.sn = (idx+1).toString(); });
+    }
+
+    // ---------- 列宽拖拽系统 ----------
+    let resizeState = null;
+    function initColumnResize(tableEl, catId) {
+        const tableObj = tablesData.find(t => t.categoryId === catId);
+        if (!tableObj) return;
+        const ths = tableEl.querySelectorAll('th');
+        ths.forEach((th, colIdx) => {
+            if (th.querySelector('.resize-handle')) return;
+            const handle = document.createElement('div');
+            handle.className = 'resize-handle';
+            th.style.position = 'relative';
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                const startX = e.clientX;
+                const startWidth = th.clientWidth;
+                resizeState = {
+                    active: true,
+                    colIdx: colIdx,
+                    startX, startWidth,
+                    tableObj, tableEl, catId
+                };
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+                e.stopPropagation();
+            });
+            th.appendChild(handle);
+        });
+    }
+
+    function handleResizeMove(e) {
+        if (!resizeState || !resizeState.active) return;
+        const delta = e.clientX - resizeState.startX;
+        let newWidth = resizeState.startWidth + delta;
+        if (newWidth < 40) newWidth = 40;
+        const th = resizeState.tableEl.querySelectorAll('th')[resizeState.colIdx];
+        if (th) {
+            th.style.width = newWidth + 'px';
+            const tableObj = resizeState.tableObj;
+            if (tableObj.colWidths) {
+                tableObj.colWidths[resizeState.colIdx] = newWidth;
+            }
+            const colCells = resizeState.tableEl.querySelectorAll(`tbody tr td:nth-child(${resizeState.colIdx+1})`);
+            colCells.forEach(cell => { cell.style.width = newWidth + 'px'; });
+        }
+    }
+
+    function stopResize() {
+        if (resizeState && resizeState.active) {
+            resizeState.active = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            resizeState = null;
+            syncStateToHash(); // 列宽变化后同步
+        }
+    }
+
+    // ---------- 渲染核心 ----------
+    function renderAllTables() {
+        const container = document.getElementById("tablesContainer");
+        container.innerHTML = "";
+        tablesData.forEach((table, idx) => {
+            const catInfo = CATEGORIES.find(c => c.id === table.categoryId);
+            const cardDiv = document.createElement("div");
+            cardDiv.className = `category-card card-${idx % 5}`;
+            cardDiv.setAttribute("data-cat-id", table.categoryId);
+            const totalVal = computeTotal(table);
+            const header = document.createElement("div");
+            header.className = "card-header";
+            header.innerHTML = `
+                <h2>${catInfo?.title || table.categoryId} <span class="total-amount">合计: ¥${totalVal.toFixed(2)}</span></h2>
+                <div class="table-actions">
+                    <button class="table-btn" data-action="addRow" data-cat="${table.categoryId}">➕ 添加行</button>
+                    <button class="table-btn" data-action="addColumn" data-cat="${table.categoryId}">📌 添加列</button>
+                    <button class="table-btn danger" data-action="delColumn" data-cat="${table.categoryId}">❌ 删除最后一列</button>
+                    <button class="table-btn" data-action="delBlankRows" data-cat="${table.categoryId}">🧹 删除空白行</button>
+                </div>
+            `;
+            cardDiv.appendChild(header);
+            const tableEl = document.createElement("table");
+            tableEl.className = "editable-table";
+            tableEl.style.tableLayout = "fixed";
+            const thead = document.createElement("thead");
+            const trHead = document.createElement("tr");
+            table.columns.forEach((col, cIdx) => {
+                const th = document.createElement("th");
+                th.innerText = col.label;
+                if (col.type === "checkbox" || col.type === "action") th.style.textAlign = "center";
+                if (col.key === "price") th.classList.add("price-col");
+                if (table.colWidths && table.colWidths[cIdx]) {
+                    th.style.width = table.colWidths[cIdx] + 'px';
+                } else {
+                    if (col.key === "sn") th.style.width = "60px";
+                    else if (col.key === "item") th.style.width = "160px";
+                    else if (col.key === "price") th.style.width = "100px";
+                    else if (col.type === "action") th.style.width = "50px";
+                    else th.style.width = "120px";
+                }
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            tableEl.appendChild(thead);
+            const tbody = document.createElement("tbody");
+            table.rows.forEach((row, rowIdx) => {
+                const tr = document.createElement("tr");
+                table.columns.forEach((col, colIdx) => {
+                    const td = document.createElement("td");
+                    if (col.type === "checkbox") {
+                        td.className = "checkbox-cell";
+                        const chk = document.createElement("input");
+                        chk.type = "checkbox";
+                        chk.checked = row[col.key] === true;
+                        chk.addEventListener("change", (e) => {
+                            row[col.key] = e.target.checked;
+                            updateAllTotals();
+                            renderAllTables(); // 重新渲染以保证合计刷新 (同时也会同步hash)
+                        });
+                        td.appendChild(chk);
+                    } else if (col.type === "action") {
+                        td.className = "action-cell";
+                        const delBtn = document.createElement("button");
+                        delBtn.innerHTML = "🗑️";
+                        delBtn.className = "delete-row-icon";
+                        delBtn.addEventListener("click", () => {
+                            table.rows.splice(rowIdx, 1);
+                            reorderSerialNumbers(table);
+                            renderAllTables();
+                        });
+                        td.appendChild(delBtn);
+                        td.style.textAlign = "center";
+                    } else if (col.type === "price_number") {
+                        td.className = "price-cell";
+                        const displayValue = (typeof row.price === 'number' && !isNaN(row.price)) ? row.price : 0;
+                        const displayText = displayValue + "¥";
+                        td.setAttribute("contenteditable", "true");
+                        td.innerText = displayText;
+                        td.style.textAlign = "center";
+                        td.addEventListener("blur", (e) => {
+                            let raw = e.target.innerText.trim();
+                            let numMatch = raw.match(/(\d+(?:\.\d+)?)/);
+                            let numeric = 0;
+                            if (numMatch) numeric = parseFloat(numMatch[0]);
+                            if (isNaN(numeric)) numeric = 0;
+                            row.price = numeric;
+                            renderAllTables();
+                        });
+                        td.addEventListener("keydown", (e) => {
+                            const key = e.key;
+                            if (key === 'Enter') { e.preventDefault(); td.blur(); }
+                            if (!/^[\d\.]$/.test(key) && key !== 'Backspace' && key !== 'Delete' && key !== 'ArrowLeft' && key !== 'ArrowRight' && key !== 'Tab') {
+                                e.preventDefault();
+                            }
+                        });
+                    } else {
+                        let fieldValue = row[col.key] !== undefined ? row[col.key] : "";
+                        td.setAttribute("contenteditable", "true");
+                        td.innerText = fieldValue;
+                        td.addEventListener("blur", (e) => {
+                            row[col.key] = e.target.innerText;
+                            if (col.key === "sn") reorderSerialNumbers(table);
+                            updateAllTotals();
+                            renderAllTables();
+                        });
+                        if (col.key === "sn") td.classList.add("serial-num");
+                    }
+                    if (table.colWidths && table.colWidths[colIdx]) {
+                        td.style.width = table.colWidths[colIdx] + 'px';
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            tableEl.appendChild(tbody);
+            cardDiv.appendChild(tableEl);
+            container.appendChild(cardDiv);
+            initColumnResize(tableEl, table.categoryId);
+        });
+        attachTableGlobalEvents();
+        updateAllTotals();
+        // 每次渲染结束，自动同步当前状态到 URL（实现持久化、跨设备共享）
+        syncStateToHash();
+    }
+
+    function attachTableGlobalEvents() {
+        document.querySelectorAll(".table-btn").forEach(btn => {
+            btn.removeEventListener("click", handleTableBtnClick);
+            btn.addEventListener("click", handleTableBtnClick);
+        });
+    }
+
+    function handleTableBtnClick(e) {
+        const btn = e.currentTarget;
+        const action = btn.dataset.action;
+        const catId = btn.dataset.cat;
+        const tableObj = tablesData.find(t => t.categoryId === catId);
+        if (!tableObj) return;
+        if (action === "addRow") {
+            const newRow = {};
+            tableObj.columns.forEach(col => {
+                if (col.type === "checkbox") newRow[col.key] = false;
+                else if (col.type === "action") { /* ignore */ }
+                else if (col.type === "price_number") newRow[col.key] = 0;
+                else newRow[col.key] = "";
+            });
+            newRow.sn = (tableObj.rows.length + 1).toString();
+            tableObj.rows.push(newRow);
+            renderAllTables();
+        }
+        else if (action === "addColumn") {
+            let newColName = prompt("请输入新列的标题", "补充信息");
+            if (!newColName) return;
+            const newKey = `col_${Date.now()}`;
+            const newColumn = { key: newKey, label: newColName, type: "text" };
+            const actionIndex = tableObj.columns.findIndex(c => c.type === "action");
+            if (actionIndex !== -1) tableObj.columns.splice(actionIndex, 0, newColumn);
+            else tableObj.columns.push(newColumn);
+            if (tableObj.colWidths) tableObj.colWidths.splice(actionIndex !== -1 ? actionIndex : tableObj.colWidths.length, 0, 100);
+            tableObj.rows.forEach(row => { row[newKey] = ""; });
+            renderAllTables();
+        }
+        else if (action === "delColumn") {
+            const removableIndex = tableObj.columns.findLastIndex((col, idx) => {
+                if (col.type === "action") return false;
+                if (col.key === "sn" || col.key === "price" || col.type === "checkbox") return false;
+                return true;
+            });
+            if (removableIndex !== -1 && tableObj.columns.length > 3) {
+                const removed = tableObj.columns.splice(removableIndex, 1)[0];
+                tableObj.rows.forEach(row => delete row[removed.key]);
+                if (tableObj.colWidths) tableObj.colWidths.splice(removableIndex, 1);
+                renderAllTables();
+            } else alert("不能删除序号/价格/购物车等核心列，只能删除自定义列。");
+        }
+        else if (action === "delBlankRows") {
+            const newRows = tableObj.rows.filter(row => {
+                let has = false;
+                for (let col of tableObj.columns) {
+                    if (col.type === "checkbox" || col.type === "action" || col.key === "sn") continue;
+                    let val = row[col.key];
+                    if (col.type === "price_number") { if (val !== 0 && val !== "" && val !== undefined) has=true; }
+                    else if (val && val.toString().trim() !== "") has=true;
+                }
+                return has;
+            });
+            if (newRows.length === tableObj.rows.length) alert("没有空白行");
+            else { tableObj.rows = newRows; reorderSerialNumbers(tableObj); renderAllTables(); }
+        }
+    }
+
+    // 从 hash 加载状态 (跨浏览器同步)
+    function loadFromHash() {
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            try {
+                const decoded = decodeURIComponent(hash);
+                const data = JSON.parse(decoded);
+                if (data.tablesData && Array.isArray(data.tablesData)) {
+                    tablesData = data.tablesData;
+                    tablesData.forEach(table => {
+                        if (!table.columns.some(c => c.type === "action")) table.columns.push({...actionColumn});
+                        if (!table.colWidths) table.colWidths = table.columns.map(() => null);
+                        table.rows.forEach(row => {
+                            if (row.price === undefined) row.price = 0;
+                            if (typeof row.price === 'string') row.price = parseFloat(row.price) || 0;
+                            if (row.inCart === undefined) row.inCart = false;
+                            if (row.ready === undefined) row.ready = false;
+                        });
+                    });
+                    if (data.bannerUrl) {
+                        currentBannerUrl = data.bannerUrl;
+                        applyBannerImage(currentBannerUrl);
+                        document.getElementById("bannerUrlInput").value = currentBannerUrl;
+                    }
+                    renderAllTables();
+                    return true;
+                }
+            } catch(e) { console.warn("解析hash失败", e); return false; }
+        }
+        return false;
+    }
+
+    function applyBannerImage(url) {
+        const bannerDiv = document.getElementById("bannerImage");
+        if (url && url.trim()) {
+            bannerDiv.style.backgroundImage = `url('${url}')`;
+            bannerDiv.style.backgroundColor = "#fbe9ce";
+        } else {
+            bannerDiv.style.backgroundImage = "";
+            bannerDiv.style.backgroundColor = "#fff2db";
+        }
+        currentBannerUrl = url;
+    }
+
+    // 保存到 localStorage (本地备份)
+    function saveToLocalStorage() {
+        const saveObj = { tablesData, bannerUrl: currentBannerUrl, version: "2.0" };
+        localStorage.setItem("maternity_package", JSON.stringify(saveObj));
+        alert("✅ 已保存到本地浏览器存储 (此设备)");
+    }
+
+    function loadFromLocalStorage() {
+        const saved = localStorage.getItem("maternity_package");
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.tablesData) {
+                    tablesData = parsed.tablesData;
+                    tablesData.forEach(table => {
+                        if (!table.columns.some(c => c.type === "action")) table.columns.push({...actionColumn});
+                        if (!table.colWidths) table.colWidths = table.columns.map(() => null);
+                        table.rows.forEach(row => {
+                            if (row.price === undefined) row.price = 0;
+                            if (typeof row.price === 'string') row.price = parseFloat(row.price) || 0;
+                        });
+                    });
+                    if (parsed.bannerUrl) {
+                        currentBannerUrl = parsed.bannerUrl;
+                        applyBannerImage(currentBannerUrl);
+                        document.getElementById("bannerUrlInput").value = currentBannerUrl;
+                    }
+                    renderAllTables();
+                    return true;
+                }
+            } catch(e) {}
+        }
+        return false;
+    }
+
+    function copyShareLink() {
+        syncStateToHash(); // 确保hash最新
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            alert("✨ 分享链接已复制！其他浏览器打开该链接即可看到当前完整清单 ✨");
+        }).catch(() => {
+            prompt("手动复制以下链接:", url);
+        });
+    }
+
+    // ---------- 初始化入口 ----------
+    window.addEventListener("DOMContentLoaded", () => {
+        // 优先从 URL Hash 加载（跨设备共享）
+        const loadedFromHash = loadFromHash();
+        if (!loadedFromHash) {
+            // 未成功则尝试从本地存储加载
+            const loadedFromLocal = loadFromLocalStorage();
+            if (!loadedFromLocal) {
+                tablesData = buildTableDataWithAction();
+                renderAllTables();
+            }
+        }
+        // Banner 交互
+        document.getElementById("applyBannerBtn").addEventListener("click", () => {
+            const newUrl = document.getElementById("bannerUrlInput").value.trim();
+            applyBannerImage(newUrl);
+            syncStateToHash();  // 同步banner到hash
+            saveToLocalStorage();
+        });
+        document.getElementById("saveToLocalBtn").addEventListener("click", saveToLocalStorage);
+        document.getElementById("copyLinkBtn").addEventListener("click", copyShareLink);
+        document.body.addEventListener('mousemove', handleResizeMove);
+        document.body.addEventListener('mouseup', stopResize);
+        // 监听hash变化以便支持浏览器前进后退
+        window.addEventListener('hashchange', () => {
+            loadFromHash();
+        });
+    });
+</script>
+</body>
+</html>
